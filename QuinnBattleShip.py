@@ -18,6 +18,9 @@ P2_attack = []
 P1_ships = []
 P2_ships = []
 
+shipname = ""
+shipsize = 0
+
 P1_shiplist = [
         ["A",2,False],
         ["B",3,False],
@@ -60,7 +63,7 @@ def create_UI():
         for i in range(HEIGHT):
             lb = Label(frm_player, text = i + 1)
             lb.grid(row=i+2, column=0)
-
+            #buttons
             btn_player_grid.append([])
             for j in range(WIDTH):
                 btn_player_grid[i].append(Button(frm_player, width=2, height=1))
@@ -82,7 +85,7 @@ def create_UI():
         for i in range(HEIGHT):
             lb = Label(frm_opponent, text = i + 1)
             lb.grid(row=i+2, column=0)
-
+            #button
             btn_opponent_grid.append([])
             for j in range(WIDTH):
                 btn_opponent_grid[i].append(Button(frm_opponent, width=2, height=1))
@@ -91,18 +94,39 @@ def create_UI():
                 btn_opponent_grid[i][j].bind("<Button-1>", place_ship)
                 
                 btn_opponent_grid[i][j].grid(row=i+2, column=j+1)
-            
+
+        #ship buttons
+        myfont = "Arial 10 bold"
+        btnA = Button(frm_ships, text="Ark(2)", font=myfont, width= 10, command=lambda: setship("A"))
+        btnB = Button(frm_ships, text="boat(3)", font=myfont, width= 10, command=lambda: setship("B"))
+        btnC = Button(frm_ships, text="cruiser(3)", font=myfont, width= 10, command=lambda: setship("C"))
+        btnD = Button(frm_ships, text="Destroyer(4)", font=myfont, width= 10, command=lambda: setship("D"))
+        btnE = Button(frm_ships, text="Enterprise(5)", font=myfont, width= 10, command=lambda: setship("E"))
+        btnA.grid(row=0, column=0)
+        btnB.grid(row=0, column=1)
+        btnC.grid(row=0, column=2)
+        btnD.grid(row=0, column=3)
+        btnE.grid(row=0, column=4)
+
+def setship(s_name):
+    global shipname, shipsize
+    shipname = s_name
+    shipsize = P1_shiplist[ord(shipname)-65][1]
+    print(shipname,shipsize)
+    
 def place_ship(event):
     print(event.widget.row, event.widget.col)
-    '''#check first that loacation is valid
+    orient = "hor"
+    
+    #check first that loacation is valid
     if orient == "hor":
-        if col + length > WIDTH:
+        if event.widget.col + shipsize > WIDTH:
             print("invalid ship")
             return
         else:
-            for i in range (length):
-                board[row][col + i] = symbol
-                
+            for i in range (shipsize):
+                P1_ships[event.widget.row][event.widget.col + i] = shipname
+                btn_player_grid[event.widget.row][event.widget.col + i].config(text=shipname)
     if orient == "ver":
         if col + length > HEIGHT:
             print("invalid ship")
@@ -110,7 +134,8 @@ def place_ship(event):
         else:
             for i in range (length):
                 board[row+i][col] = symbol
-                '''
+            show_board(P1_ships)
+                
 def ship_placement(board):
     for i in range(len(P1_shiplist)):
         print("place ship" + P1_shiplist[i][0]+", length" + str(P1_shiplist[i][1]))
@@ -128,6 +153,7 @@ def start_game():
     fill_board(P2_attack)
     fill_board(P1_ships)
     fill_board(P2_ships)
+start_game()
 create_UI()
 
 frm_player.grid(row=0, column=0)
